@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -72,11 +72,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>D:\dev\LearnOpenGL\glfw-3.4\build\src\Debug;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\dev\LearnOpenGL\GLAD\include;D:\dev\LearnOpenGL\glfw-3.4\include;$(IncludePath)</IncludePath>
+    <IncludePath>External;D:\dev\LearnOpenGL\GLAD\include;D:\dev\LearnOpenGL\glfw-3.4\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>D:\dev\LearnOpenGL\glfw-3.4\build\src\Debug;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\dev\LearnOpenGL\GLAD\include;D:\dev\LearnOpenGL\glfw-3.4\include;$(IncludePath)</IncludePath>
+    <IncludePath>External;D:\dev\LearnOpenGL\GLAD\include;D:\dev\LearnOpenGL\glfw-3.4\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,6 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,11 +136,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\GLAD\src\glad.c" />
+    <ClCompile Include="External\stb_image\stb_image.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="External\stb_image\stb_image.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fs" />

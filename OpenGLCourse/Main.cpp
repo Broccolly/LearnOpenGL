@@ -1,18 +1,62 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
+#include "Texture.h"
+#include "Mesh.h"
 
-float vertices[] = {
-	 1.0f,  1.0f, 0.0f,  1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-	 1.0f, -1.0f, 0.0f,  1.0f,  0.0f, 0.0f, 1.0f, 0.0f,
-	-1.0f, -1.0f, 0.0f,  0.0f,  0.0f, 1.0f, 0.0f, 0.0f,
-	-1.0f,  1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 0.0f, 1.0f
-};
+Vertex vertices[] = {
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+	{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+	{{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}} };
 
-unsigned int indices[] = {
-	0, 1, 3,
-	1, 2, 3
+glm::vec3 positions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -20,16 +64,26 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0,0,width,height);
 }
 
+float fov{ 45.0f };
+
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		fov += 1.0f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		fov -= 1.0f;
+	}
 }
 
 static const unsigned int WINDOW_WIDTH = 800;
-static const unsigned int WINDOW_HEIGHT = 800;
+static const unsigned int WINDOW_HEIGHT = 600;
 
 int main(int argc, const char** argv)
 {
@@ -54,45 +108,70 @@ int main(int argc, const char** argv)
 	}
 
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
 
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	glEnable(GL_DEPTH_TEST);
 
 
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//unsigned int EBO;
+	//glGenBuffers(1, &EBO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glBindVertexArray(0);
+
+
+	// Textures
+	unsigned int texture0, texture1;
+
+	Texture tex0("Textures/wall.jpg", false);
+	Texture tex1("Textures/awesomeface.png", true);
+
+
+	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	Shader shader("shader.vs", "shader.fs");
 
+	glm::mat4 trans = glm::mat4(1.0f); // Identity
+	glm::mat4 view = glm::mat4(1.0f); // Identity
+
+	Mesh mesh(vertices, sizeof(vertices) / sizeof(Vertex));
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 		glfwSwapBuffers(window);
 
+		glm::mat4 proj = glm::perspective(glm::radians(fov), (float)WINDOW_WIDTH/(float)WINDOW_HEIGHT, 0.1f, 100.0f); // Identity
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader.Use();
 		shader.SetUniformFloat("time", glfwGetTime());
+		view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0, 0.0, -3.0f));
+		shader.SetUniformMat4("view", view);
+		shader.SetUniformInt("ourTexture0", 0);
+		shader.SetUniformInt("ourTexture1", 1);
+		tex0.SetToTextureUnit(0);
+		tex1.SetToTextureUnit(1);
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		mesh.BindMesh();
+
+		for (unsigned int i = 0; i < sizeof(positions) / sizeof(positions[0]); i++)
+		{
+			trans = glm::mat4(1.0f);
+			trans = glm::translate(trans, positions[i]);
+			trans = glm::rotate(trans, glm::radians(20.0f * i), glm::vec3(1.0, 0.3, 0.5));
+			trans = glm::scale(trans, glm::vec3(1.0f));
+
+			shader.SetUniformMat4("mat", trans);
+			shader.SetUniformMat4("proj", proj);
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		//glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 		glfwPollEvents();
 	}
 

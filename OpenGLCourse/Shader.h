@@ -14,4 +14,5 @@ public:
 	void SetUniformBool(const std::string& name, bool value) const;
 	void SetUniformInt(const std::string& name, int value) const;
 	void SetUniformFloat(const std::string& name, float value) const;
+	void SetUniformMat4(const std::string& name, const glm::mat4& value) const;
 };

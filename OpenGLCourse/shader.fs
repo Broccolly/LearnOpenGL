@@ -2,12 +2,13 @@
 in vec4 colour;
 in vec2 uv;
 uniform float time;
+
+uniform sampler2D ourTexture0;
+uniform sampler2D ourTexture1;
+
 out vec4 FragColour;
 void main()
 {
-    FragColour = colour;
-    FragColour.x = (0.5 + 0.3*(cos(11.0*(uv.x + uv.y) + 2.0*time)));
-    FragColour.y = (0.3 + 0.1*(cos(5.0*(uv.y) + 3.5*time)));
-    FragColour.z = (0.5 + 0.3*(cos(7.3*(uv.x) + 3.6*time)));
-
+    FragColour = mix(texture(ourTexture0, uv), texture(ourTexture1, uv), 0.2);
+    FragColour = vec4(uv.x, uv.y, 0.0, 1.0);
 }
