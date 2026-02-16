@@ -73,7 +73,7 @@ static const unsigned int WINDOW_HEIGHT = 600;
 float fov{ 45.0f };
 double currentTime = 0.0f;
 double deltaTime = 0.0f;
-float cameraSpeed = 30.0f;
+float cameraSpeed = 10.0f;
 float mouseX = WINDOW_WIDTH / 2;
 float mouseY = WINDOW_HEIGHT / 2;
 float cameraSensitivity = 0.002f;
@@ -101,7 +101,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	glm::vec3 axis = cameraOrientation * glm::vec3(0.0f, 1.0f, 0.0f);
 
 	cameraOrientation = glm::rotate(glm::quat_identity<float, glm::packed_highp>(), -cameraSensitivity * 1.0f * deltaX, glm::vec3(0.0f, 1.0f, 0.0f)) * cameraOrientation;
-	cameraOrientation = glm::rotate(cameraOrientation, -cameraSensitivity * 1.0f * deltaY, glm::vec3(1.0f, 0.0f, 0.0f));
+
+	glm::quat newQuat = glm::rotate(cameraOrientation, -cameraSensitivity * 1.0f * deltaY, glm::vec3(1.0f, 0.0f, 0.0f));
+
+	// Shortcut to test newY against Y and stop overrotation vertically
+	if (newQuat.w * newQuat.w + newQuat.y * newQuat.y - newQuat.x * newQuat.x - newQuat.z * newQuat.z >= 0)
+	{
+		cameraOrientation = newQuat;
+	}
 }
 
 void processInput(GLFWwindow* window)
