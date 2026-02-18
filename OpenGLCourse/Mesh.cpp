@@ -19,12 +19,16 @@ Mesh::Mesh(const Vertex* data, unsigned int vertexCount)
 	glEnableVertexAttribArray(0);
 	offset += sizeof(Vertex::position);
 
-	glVertexAttribPointer(1, sizeof(Vertex::colour) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
+	glVertexAttribPointer(1, sizeof(Vertex::normal) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
 	glEnableVertexAttribArray(1);
+	offset += sizeof(Vertex::normal);
+
+	glVertexAttribPointer(2, sizeof(Vertex::colour) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
+	glEnableVertexAttribArray(2);
 	offset += sizeof(Vertex::colour);
 
-	glVertexAttribPointer(2, sizeof(Vertex::uv) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
-	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, sizeof(Vertex::uv) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
+	glEnableVertexAttribArray(3);
 
 	glBindVertexArray(0);
 }

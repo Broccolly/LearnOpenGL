@@ -64,7 +64,13 @@
     <None Include="shader.vs">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="shader.fs">
+    <None Include="textureShader.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightingShader.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightShader.fs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

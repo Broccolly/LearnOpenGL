@@ -151,7 +151,9 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.fs" />
+    <None Include="lightingShader.fs" />
+    <None Include="lightShader.fs" />
+    <None Include="textureShader.fs" />
     <None Include="shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

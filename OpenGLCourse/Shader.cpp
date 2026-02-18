@@ -49,7 +49,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	if (!success)
 	{
 		glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-		std::cout << "ERROR::SAHADER::VERTEX::COMPILATION FAILED\n" << infoLog << std::endl;
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION FAILED\n" << infoLog << std::endl;
 	}
 
 		// Compile fragment shader
@@ -60,7 +60,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	if (!success)
 	{
 		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-		std::cout << "ERROR::SAHADER::VERTEX::COMPILATION FAILED\n" << infoLog << std::endl;
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION FAILED\n" << infoLog << std::endl;
 	}
 
 	ID = glCreateProgram();
@@ -90,6 +90,10 @@ void Shader::SetUniformBool(const std::string& name, bool value) const
 	{
 		glUniform1i(loc, (int)value);
 	}
+	else
+	{
+		std::cout << "Cannot find uniform " << name << std::endl;
+	}
 }
 
 void Shader::SetUniformInt(const std::string& name, int value) const
@@ -98,6 +102,10 @@ void Shader::SetUniformInt(const std::string& name, int value) const
 	if (loc >= 0)
 	{
 		glUniform1i(loc, value);
+	}
+	else
+	{
+		std::cout << "Cannot find uniform " << name << std::endl;
 	}
 }
 
@@ -108,6 +116,33 @@ void Shader::SetUniformFloat(const std::string& name, float value) const
 	{
 		glUniform1f(loc, value);
 	}
+	else
+	{
+		std::cout << "Cannot find uniform " << name << std::endl;
+	}
+}
+
+void Shader::SetUniformVec3(const std::string& name, const glm::vec3& value) const
+{
+	int loc = glGetUniformLocation(ID, name.c_str());
+	if (loc >= 0)
+	{
+		glUniform3fv(loc, 1, glm::value_ptr(value));
+	}
+	else
+	{
+		std::cout << "Cannot find uniform " << name << std::endl;
+	}
+}
+
+void Shader::SetUniformMat3(const std::string& name, const glm::mat3& value) const
+{
+	int loc = glGetUniformLocation(ID, name.c_str());
+	if (loc >= 0)
+	{
+		glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+	}
+
 }
 
 void Shader::SetUniformMat4(const std::string& name, const glm::mat4& value) const
@@ -116,5 +151,9 @@ void Shader::SetUniformMat4(const std::string& name, const glm::mat4& value) con
 	if (loc >= 0)
 	{
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+	}
+	else
+	{
+		std::cout << "Cannot find uniform " << name << std::endl;
 	}
 }
