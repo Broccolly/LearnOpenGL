@@ -135,6 +135,19 @@ void Shader::SetUniformVec3(const std::string& name, const glm::vec3& value) con
 	}
 }
 
+void Shader::SetUniformVec4(const std::string& name, const glm::vec4& value) const
+{
+	int loc = glGetUniformLocation(ID, name.c_str());
+	if (loc >= 0)
+	{
+		glUniform4fv(loc, 1, glm::value_ptr(value));
+	}
+	else
+	{
+		std::cout << "Cannot find uniform " << name << std::endl;
+	}
+}
+
 void Shader::SetUniformMat3(const std::string& name, const glm::mat3& value) const
 {
 	int loc = glGetUniformLocation(ID, name.c_str());
@@ -142,7 +155,10 @@ void Shader::SetUniformMat3(const std::string& name, const glm::mat3& value) con
 	{
 		glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 	}
-
+	else
+	{
+		std::cout << "Cannot find uniform " << name << std::endl;
+	}
 }
 
 void Shader::SetUniformMat4(const std::string& name, const glm::mat4& value) const

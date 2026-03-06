@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <sstream>
 #include <math.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -114,6 +115,14 @@ glm::vec3 positions[] = {
 	glm::vec3(1.5f,  2.0f, -2.5f),
 	glm::vec3(1.5f,  0.2f, -1.5f),
 	glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
+glm::vec3 lightPositions[] =
+{
+	glm::vec3(0.7f, 0.2f,  2.0f),
+	glm::vec3(2.3f,-3.3f, -4.0f),
+	glm::vec3(-4.0f, 2.0f,-12.0f),
+	glm::vec3(0.0f, 0.0f, -3.0f)
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -245,12 +254,10 @@ int main(int argc, const char** argv)
 	// Textures
 	unsigned int texture0, texture1;
 
-	Texture tex0("Textures/wall.jpg", false);
-	Texture tex1("Textures/awesomeface.png", true);
+	Texture tex0("Textures/container2.png", true);
+	Texture tex0spec("Textures/container2_specular.png", true);
 
 	GenerateAmphora(amphora0, 24, 0.8f, 1.0f, 1.1f, 0.2f, glm::vec3(1.0f));
-	
-	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	//Shader shader("shader.vs", "shader.fs");
 	Shader lightingShader("shader.vs", "lightingShader.fs");
@@ -270,7 +277,7 @@ int main(int argc, const char** argv)
 		glm::mat4 proj;
 		debugCamera.GetProjectionMatrix(proj);
 
-		glClearColor(0.1f, 0.15f, 0.15f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		lightingShader.Use();
 		deltaTime = glfwGetTime() - currentTime;
@@ -283,14 +290,28 @@ int main(int argc, const char** argv)
 		lightingShader.SetUniformMat4("proj", proj);
 		
 
-		//shader.SetUniformInt("ourTexture0", 0);
-		//shader.SetUniformInt("ourTexture1", 1);
-		//tex0.SetToTextureUnit(0);
-		//tex1.SetToTextureUnit(1);
-		lightingShader.SetUniformVec3("light.position", view * glm::vec4(lightPos,1.0f));
-		lightingShader.SetUniformVec3("light.ambient", 0.1f * lightColour);
-		lightingShader.SetUniformVec3("light.diffuse", 0.8f * lightColour);
-		lightingShader.SetUniformVec3("light.specular", glm::vec3(0.8f, 0.8f, 0.1f) * lightColour);
+		glm::vec3 dirLightCol(0.95f,0.7f,0.14f);
+		glm::vec3 viewSpaceDir = glm::vec3(view * glm::vec4(0.0f, -1.0f, 1.0f, 0.0f));
+		lightingShader.SetUniformVec3("dirLight.direction", viewSpaceDir);
+		lightingShader.SetUniformVec3("dirLight.ambient", 0.1f * dirLightCol);
+		lightingShader.SetUniformVec3("dirLight.diffuse", dirLightCol);
+		lightingShader.SetUniformVec3("dirLight.specular", glm::vec3(1.0f) * dirLightCol);
+
+		for (int i = 0; i < sizeof(lightPositions) / sizeof(glm::vec3); i++)
+		{
+			std::stringstream pointLightIdStream;
+			pointLightIdStream << "pointLights[" << i << "]";
+
+			std::string pointLightId = pointLightIdStream.str();
+
+			lightingShader.SetUniformVec4(pointLightId + ".position", view * glm::vec4(lightPositions[i], 1.0f));
+			lightingShader.SetUniformVec3(pointLightId + ".ambient", 0.1f * lightColour);
+			lightingShader.SetUniformVec3(pointLightId + ".diffuse", 1.0f * lightColour);
+			lightingShader.SetUniformVec3(pointLightId + ".specular", glm::vec3(1.0f) * lightColour);
+			lightingShader.SetUniformFloat(pointLightId + ".kC", 1.0f);
+			lightingShader.SetUniformFloat(pointLightId + ".kL", 0.045f);
+			lightingShader.SetUniformFloat(pointLightId + ".kQ", 0.0075f);
+		}
 
 		mesh.BindMesh();
 
@@ -306,29 +327,29 @@ int main(int argc, const char** argv)
 			glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(trans)));
 			lightingShader.SetUniformMat3("normMat", normalMat);
 
-			glm::vec3 col = glm::vec3(0.5f * abs(sin(i)), 0.3f * abs(cos(i)), 0.5f * abs(sin(3*i)));
+			lightingShader.SetUniformInt("material.diffuse", 0);
+			tex0.SetToTextureUnit(0);
+			lightingShader.SetUniformInt("material.specular", 1);
+			tex0spec.SetToTextureUnit(1);
+			lightingShader.SetUniformFloat("material.shininess", 1.5f);
 
-			lightingShader.SetUniformVec3("material.ambient", col);
-			lightingShader.SetUniformVec3("material.diffuse", col);
-			lightingShader.SetUniformVec3("material.specular", col);
-			lightingShader.SetUniformFloat("material.shininess", 0.5f);
-
-			glDrawArrays(GL_TRIANGLES, 0, sizeof(amphora0)/sizeof(Vertex));
+			glDrawArrays(GL_TRIANGLES, 0, 24*24);
 		}
-
 		// Light
-		glm::mat4 transLight = glm::mat4(1.0f); // Identity
-		transLight = glm::translate(transLight, lightPos);
-		transLight = glm::scale(transLight, glm::vec3(0.2f));
-		lightShader.Use();
-		lightShader.SetUniformMat4("view", view);
-		lightShader.SetUniformMat4("proj", proj);
-		lightShader.SetUniformMat4("model", transLight);
-		lightShader.SetUniformVec3("lightColour", lightColour);
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(glm::vec3); i++)
+		{
+			glm::mat4 transLight = glm::mat4(1.0f); // Identity
+			transLight = glm::translate(transLight, lightPositions[i]);
+			transLight = glm::scale(transLight, glm::vec3(0.2f));
+			lightShader.Use();
+			lightShader.SetUniformMat4("view", view);
+			lightShader.SetUniformMat4("proj", proj);
+			lightShader.SetUniformMat4("model", transLight);
+			lightShader.SetUniformVec3("lightColour", lightColour);
 
-		lightMesh.BindMesh();
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
+			lightMesh.BindMesh();
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		//glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 		glfwPollEvents();
 	}
